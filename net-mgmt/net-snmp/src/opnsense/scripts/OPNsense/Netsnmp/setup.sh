@@ -8,7 +8,7 @@
 PERSISTDIR=/var/net-snmp
 PERSIST=${PERSISTDIR}/snmpd.conf
 USERSDIR=/usr/local/etc/netsnmp
-USERS=${USERSDIR}/snmpd_users.conf
+USERS=${USERSDIR}/snmpd_usercredentials.conf
 PIDFILE=/var/run/net_snmpd.pid
 
 mkdir -p ${PERSISTDIR}
@@ -19,16 +19,17 @@ mkdir -p ${PERSISTDIR}/mib_indexes
 chown -R root:wheel ${PERSISTDIR}/mib_indexes
 chmod 700 ${PERSISTDIR}/mib_indexes
 
-# the staged user file contains cleartext credentials
-install -d -o root -g wheel -m 0700 ${USERSDIR}
+# staged credentials: templates inherit the directory mode on later renders
+mkdir -p ${USERSDIR}
+chown -R root:wheel ${USERSDIR}
+chmod 700 ${USERSDIR}
 if [ -f ${USERS} ]; then
-	chown root:wheel ${USERS}
 	chmod 600 ${USERS}
 fi
 
 # On restart and reload rc.subr runs this while snmpd is still up.  snmpd
 # rewrites its persistent file when it stops, so only merge when it is down.
-if pgrep -F ${PIDFILE} > /dev/null 2>&1; then
+if pgrep -qF ${PIDFILE} snmpd 2> /dev/null; then
 	exit 0
 fi
 
@@ -44,6 +45,5 @@ TMP=$(mktemp ${PERSIST}.XXXXXX) || exit 1
 		cat ${USERS}
 	fi
 } > ${TMP}
-chown root:wheel ${TMP}
 chmod 600 ${TMP}
 mv -f ${TMP} ${PERSIST}

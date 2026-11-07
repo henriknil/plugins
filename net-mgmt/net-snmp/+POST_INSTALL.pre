@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# the template renders cleartext credentials here; create it before the
-# template reload so the rendered file inherits mode 0600
-/usr/bin/install -d -o root -g wheel -m 0700 /usr/local/etc/netsnmp
