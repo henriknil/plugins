@@ -11,6 +11,10 @@ WWW: http://www.net-snmp.org
 Plugin Changelog
 ----------------
 
+1.8
+
+* Keep the SNMPv3 engine ID and boot counter across reboots and configuration changes (contributed by Henrik Nilsson)
+
 1.7
 
 * Hardening input fields to avoid multiline templating (reported by Ravindu Lakmina Munaweera)
